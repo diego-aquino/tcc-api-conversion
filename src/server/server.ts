@@ -6,6 +6,7 @@ import { handleServerError } from './errors';
 const server = fastify({
   logger: true,
   disableRequestLogging: environment.NODE_ENV !== 'development',
+  pluginTimeout: 0,
 });
 
 server.setErrorHandler(handleServerError);
