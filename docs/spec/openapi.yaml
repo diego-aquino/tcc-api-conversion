@@ -1,0 +1,206 @@
+openapi: 3.1.0
+
+info:
+  title: API de Pagamentos
+  version: 1.0.0
+tags:
+  - name: Pagamentos
+
+paths:
+  /payments:
+    post:
+      summary: Registrar um pagamento pendente
+      operationId: payments/create
+      tags:
+        - Pagamentos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - itemId
+                - customerId
+                - currency
+                - price
+              properties:
+                itemId:
+                  type: integer
+                  description: O identificador do item pago
+                  example: 1
+                customerId:
+                  type: integer
+                  description: O identificador do cliente pagador
+                  example: 2
+                description:
+                  type: string
+                  description: A descrição do pagamento
+                  example: Calça Jeans Azul
+                currency:
+                  type: string
+                  description: A moeda utilizada no pagamento
+                  example: BRL
+                price:
+                  type: number
+                  description: O valor do pagamento na moeda especificada
+                  format: double
+                  example: 100.00
+      responses:
+        '201':
+          description: Pagamento pendente registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '5XX':
+          description: Erro inesperado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /payments/{paymentId}:
+    get:
+      summary: Obter um pagamento
+      operationId: payments/get
+      tags:
+        - Pagamentos
+      parameters:
+        - name: paymentId
+          in: path
+          description: O identificador do pagamento
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Pagamento encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          description: Não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '5XX':
+          description: Erro inesperado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+components:
+  schemas:
+    Payment:
+      type: object
+      required:
+        - id
+        - state
+        - itemId
+        - customerId
+        - description
+        - currency
+        - price
+      properties:
+        id:
+          type: integer
+          description: O identificador do pagamento
+          example: 1
+        state:
+          type: string
+          description: |
+            O estado do pagamento:
+            - PENDING: pagamento ainda não realizado;
+            - COMPLETE: pagamento realizado com sucesso;
+            - REJECTED: pagamento rejeitado.
+          enum:
+            - PENDING
+            - COMPLETE
+            - REJECTED
+          example: PENDING
+        itemId:
+          type: integer
+          description: O identificador do item pago
+          example: 2
+        customerId:
+          type: integer
+          description: O identificador do cliente pagador
+          example: 3
+        description:
+          type: string
+          description: A descrição do pagamento
+          example: Calça Jeans Azul
+          nullable: true
+        currency:
+          type: string
+          description: A moeda utilizada no pagamento
+          example: BRL
+        price:
+          type: number
+          description: O valor total da compra na moeda especificada
+          format: double
+          example: 100.00
+
+    ValidationError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A mensagem de erro
+          example: Validation error
+        issues:
+          type: array
+          description: Os problemas de validação
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: A mensagem de erro
+                example: 'Invalid input: expected string, received number'
+              code:
+                type: string
+                description: O código do erro
+                example: invalid_type
+              path:
+                type: array
+                description: O caminho do erro
+                items:
+                  oneOf:
+                    - type: string
+                    - type: number
+                example: ['names', 1]
+            additionalProperties: true
+
+    NotFoundError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A mensagem de erro
+          example: Not found
+
+    InternalServerError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A mensagem de erro
+          example: Internal server error
