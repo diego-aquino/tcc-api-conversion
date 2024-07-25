@@ -68,7 +68,7 @@ paths:
 
   /payments/{paymentId}:
     get:
-      summary: Obter um pagamento
+      summary: Obter os detalhes de um pagamento
       operationId: payments/get
       tags:
         - Pagamentos
