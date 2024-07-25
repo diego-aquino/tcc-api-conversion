@@ -1,18 +1,18 @@
 openapi: 3.1.0
 
 info:
-  title: API de Pagamentos
+  title: API de Conversão
   version: 1.0.0
 tags:
-  - name: Pagamentos
+  - name: Conversões
 
 paths:
-  /payments:
+  /conversions:
     post:
-      summary: Registrar um pagamento pendente
-      operationId: payments/create
+      summary: Criar uma conversão
+      operationId: conversions/create
       tags:
-        - Pagamentos
+        - Conversões
       requestBody:
         required: true
         content:
@@ -20,39 +20,34 @@ paths:
             schema:
               type: object
               required:
-                - itemId
-                - customerId
-                - currency
-                - price
+                - originalFileName
+                - originalFileSize
+                - targetFileType
               properties:
-                itemId:
-                  type: integer
-                  description: O identificador do item pago
-                  example: 1
-                customerId:
-                  type: integer
-                  description: O identificador do cliente pagador
-                  example: 2
-                description:
+                originalFileName:
                   type: string
-                  description: A descrição do pagamento
-                  example: Calça Jeans Azul
-                currency:
+                  description: O nome do arquivo
+                  example: file.docx
+                originalFileSize:
+                  type: integer
+                  description: O tamanho do arquivo em bytes
+                  example: 1024
+                originalFileType:
                   type: string
-                  description: A moeda utilizada no pagamento
-                  example: BRL
-                price:
-                  type: number
-                  description: O valor do pagamento na moeda especificada
-                  format: double
-                  example: 100.00
+                  description:
+                    O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
+                  example: docx
+                targetFileType:
+                  type: string
+                  description: O tipo de arquivo desejado para a conversão
+                  example: pdf
       responses:
-        '201':
-          description: Pagamento pendente registrado com sucesso
+        '202':
+          description: Conversão aceita
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
+                $ref: '#/components/schemas/Conversion'
         '400':
           description: Erro de validação
           content:
@@ -66,27 +61,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
 
-  /payments/{paymentId}:
+  /conversions/{conversionId}:
     get:
-      summary: Obter os detalhes de um pagamento
-      operationId: payments/get
+      summary: Obter os detalhes de uma conversão
+      operationId: conversions/get
       tags:
-        - Pagamentos
+        - Conversões
       parameters:
-        - name: paymentId
+        - name: conversionId
           in: path
-          description: O identificador do pagamento
+          description: O identificador da conversão
           required: true
           schema:
-            type: integer
-          example: 1
+            type: string
+            format: uuid
+          example: 1688deb1-9807-4da0-82be-90dc39d8bbab
       responses:
         '200':
-          description: Pagamento encontrado
+          description: Conversão encontrada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
+                $ref: '#/components/schemas/Conversion'
         '404':
           description: Não encontrado
           content:
@@ -102,55 +98,71 @@ paths:
 
 components:
   schemas:
-    Payment:
+    Conversion:
       type: object
       required:
         - id
         - state
-        - itemId
-        - customerId
-        - description
-        - currency
-        - price
+        - originalFileName
+        - originalFileSize
+        - originalFileType
+        - targetFileType
+        - targetFileName
+        - targetFileSize
+        - createdAt
+        - updatedAt
       properties:
         id:
-          type: integer
-          description: O identificador do pagamento
-          example: 1
+          type: string
+          format: uuid
+          description: O identificador da conversão
+          example: 1688deb1-9807-4da0-82be-90dc39d8bbab
         state:
           type: string
           description: |
-            O estado do pagamento:
-            - PENDING: pagamento ainda não realizado;
-            - COMPLETE: pagamento realizado com sucesso;
-            - REJECTED: pagamento rejeitado.
+            O estado da conversão:
+            - PENDING: conversão pendente;
+            - COMPLETE: conversão concluída;
+            - ERROR: conversão com erro.
           enum:
             - PENDING
             - COMPLETE
-            - REJECTED
+            - ERROR
           example: PENDING
-        itemId:
-          type: integer
-          description: O identificador do item pago
-          example: 2
-        customerId:
-          type: integer
-          description: O identificador do cliente pagador
-          example: 3
-        description:
+        originalFileName:
           type: string
-          description: A descrição do pagamento
-          example: Calça Jeans Azul
-          nullable: true
-        currency:
+          description: O nome do arquivo
+          example: file.docx
+        originalFileSize:
+          type: integer
+          description: O tamanho do arquivo em bytes
+          example: 1024
+        originalFileType:
           type: string
-          description: A moeda utilizada no pagamento
-          example: BRL
-        price:
-          type: number
-          description: O valor total da compra na moeda especificada
-          format: double
-          example: 100.00
+          description: O tipo original do arquivo
+          example: docx
+        targetFileType:
+          type: string
+          description: O tipo de arquivo desejado
+          example: pdf
+        targetFileName:
+          type: string
+          description: O nome do arquivo convertido
+          example: file.pdf
+        targetFileSize:
+          type: integer
+          description: O tamanho do arquivo convertido em bytes
+          example: 2048
+        createdAt:
+          type: string
+          format: date-time
+          description: A data e hora de criação da conversão
+          example: '2021-08-01T12:00:00Z'
+        finishedAt:
+          type: string
+          format: date-time
+          description: A data e hora da finalização da conversão
+          example: '2021-08-01T12:00:00Z'
 
     ValidationError:
       type: object

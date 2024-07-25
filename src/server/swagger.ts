@@ -32,7 +32,7 @@ export async function loadServerSwagger() {
       deepLinking: true,
     },
     theme: {
-      title: 'API de Pagamentos',
+      title: 'API de Conversão',
       css: [
         {
           filename: 'custom.css',

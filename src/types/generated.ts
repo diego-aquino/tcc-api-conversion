@@ -3,61 +3,78 @@
 
 import type { HttpSchema, HttpStatusCode, MergeHttpResponsesByStatusCode } from 'zimic/http';
 
-export type PaymentSchema = HttpSchema.Paths<{
-  '/payments': {
-    /** Registrar um pagamento pendente */
-    POST: PaymentOperations['payments/create'];
+export type ConversionSchema = HttpSchema.Paths<{
+  '/conversions': {
+    /** Criar uma conversão */
+    POST: ConversionOperations['conversions/create'];
   };
-  '/payments/:paymentId': {
-    /** Obter um pagamento */
-    GET: PaymentOperations['payments/get'];
+  '/conversions/:conversionId': {
+    /** Obter os detalhes de uma conversão */
+    GET: ConversionOperations['conversions/get'];
   };
 }>;
 
-export interface PaymentComponents {
+export interface ConversionComponents {
   schemas: {
-    Payment: {
+    Conversion: {
       /**
-       * @description O identificador do pagamento
-       * @example 1
+       * Format: uuid
+       * @description O identificador da conversão
+       * @example 1688deb1-9807-4da0-82be-90dc39d8bbab
        */
-      id: number;
+      id: string;
       /**
-       * @description O estado do pagamento:
-       *     - PENDING: pagamento ainda não realizado;
-       *     - COMPLETE: pagamento realizado com sucesso;
-       *     - REJECTED: pagamento rejeitado.
+       * @description O estado da conversão:
+       *     - PENDING: conversão pendente;
+       *     - COMPLETE: conversão concluída;
+       *     - ERROR: conversão com erro.
        *
        * @example PENDING
        * @enum {string}
        */
-      state: 'PENDING' | 'COMPLETE' | 'REJECTED';
+      state: 'PENDING' | 'COMPLETE' | 'ERROR';
       /**
-       * @description O identificador do item pago
-       * @example 2
+       * @description O nome do arquivo
+       * @example file.docx
        */
-      itemId: number;
+      originalFileName: string;
       /**
-       * @description O identificador do cliente pagador
-       * @example 3
+       * @description O tamanho do arquivo em bytes
+       * @example 1024
        */
-      customerId: number;
+      originalFileSize: number;
       /**
-       * @description A descrição do pagamento
-       * @example Calça Jeans Azul
+       * @description O tipo original do arquivo
+       * @example docx
        */
-      description: string | null;
+      originalFileType: string;
       /**
-       * @description A moeda utilizada no pagamento
-       * @example BRL
+       * @description O tipo de arquivo desejado
+       * @example pdf
        */
-      currency: string;
+      targetFileType: string;
       /**
-       * Format: double
-       * @description O valor total da compra na moeda especificada
-       * @example 100
+       * @description O nome do arquivo convertido
+       * @example file.pdf
        */
-      price: number;
+      targetFileName: string;
+      /**
+       * @description O tamanho do arquivo convertido em bytes
+       * @example 2048
+       */
+      targetFileSize: number;
+      /**
+       * Format: date-time
+       * @description A data e hora de criação da conversão
+       * @example 2021-08-01T12:00:00Z
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description A data e hora da finalização da conversão
+       * @example 2021-08-01T12:00:00Z
+       */
+      finishedAt?: string;
     };
     ValidationError: {
       /**
@@ -105,76 +122,70 @@ export interface PaymentComponents {
   };
 }
 
-export interface PaymentOperations {
-  'payments/create': HttpSchema.Method<{
+export interface ConversionOperations {
+  'conversions/create': HttpSchema.Method<{
     request: {
       body: {
         /**
-         * @description O identificador do item pago
-         * @example 1
+         * @description O nome do arquivo
+         * @example file.docx
          */
-        itemId: number;
+        originalFileName: string;
         /**
-         * @description O identificador do cliente pagador
-         * @example 2
+         * @description O tamanho do arquivo em bytes
+         * @example 1024
          */
-        customerId: number;
+        originalFileSize: number;
         /**
-         * @description A descrição do pagamento
-         * @example Calça Jeans Azul
+         * @description O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
+         * @example docx
          */
-        description?: string;
+        originalFileType?: string;
         /**
-         * @description A moeda utilizada no pagamento
-         * @example BRL
+         * @description O tipo de arquivo desejado para a conversão
+         * @example pdf
          */
-        currency: string;
-        /**
-         * Format: double
-         * @description O valor do pagamento na moeda especificada
-         * @example 100
-         */
-        price: number;
+        targetFileType: string;
       };
     };
     response: MergeHttpResponsesByStatusCode<
       [
         {
-          /** @description Pagamento pendente registrado com sucesso */
-          201: {
-            body: PaymentComponents['schemas']['Payment'];
+          /** @description Conversão aceita */
+          202: {
+            body: ConversionComponents['schemas']['Conversion'];
           };
           /** @description Erro de validação */
           400: {
-            body: PaymentComponents['schemas']['ValidationError'];
+            body: ConversionComponents['schemas']['ValidationError'];
           };
         },
         {
           /** @description Erro inesperado */
           [StatusCode in HttpStatusCode.ServerError]: {
-            body: PaymentComponents['schemas']['InternalServerError'];
+            body: ConversionComponents['schemas']['InternalServerError'];
           };
         },
       ]
     >;
   }>;
-  'payments/get': HttpSchema.Method<{
+  'conversions/get': HttpSchema.Method<{
     response: MergeHttpResponsesByStatusCode<
       [
         {
-          /** @description Pagamento encontrado */
+          /** @description Conversão encontrada */
           200: {
-            body: PaymentComponents['schemas']['Payment'];
+            body: ConversionComponents['schemas']['Conversion'];
           };
           /** @description Não encontrado */
           404: {
-            body: PaymentComponents['schemas']['NotFoundError'];
+            body: ConversionComponents['schemas']['NotFoundError'];
           };
         },
         {
           /** @description Erro inesperado */
           [StatusCode in HttpStatusCode.ServerError]: {
-            body: PaymentComponents['schemas']['InternalServerError'];
+            body: ConversionComponents['schemas']['InternalServerError'];
           };
         },
       ]

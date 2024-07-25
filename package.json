@@ -1,5 +1,5 @@
 {
-  "name": "tcc-api-payments",
+  "name": "tcc-api-conversion",
   "version": "0.0.0",
   "author": "Diego Aquino <diegocruzdeaquino@gmail.com>",
   "packageManager": "pnpm@9.5.0",
@@ -15,8 +15,8 @@
     "style:check": "pnpm style --check",
     "style:format": "pnpm style --write",
     "types:check": "tsc --noEmit",
-    "typegen": "dotenv -c development -- pnpm typegen:payments && pnpm lint 'src/**/*generated.ts'",
-    "typegen:payments": "zimic typegen openapi ./docs/spec/openapi.yaml --output src/types/generated.ts --service-name Payment",
+    "typegen": "dotenv -c development -- pnpm typegen:conversion && pnpm lint 'src/**/*generated.ts'",
+    "typegen:conversion": "zimic typegen openapi ./docs/spec/openapi.yaml --output src/types/generated.ts --service-name Conversion",
     "test": "dotenv -c test -- dotenv -c development -- vitest",
     "pre:commit": "lint-staged",
     "pre:push": "concurrently --names style,types,lint 'pnpm style:check .' 'pnpm types:check' 'pnpm lint .'",

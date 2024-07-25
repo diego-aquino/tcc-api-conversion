@@ -3,14 +3,14 @@ import { FastifyError, FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
 import server from '@/server/server';
-import { PaymentComponents } from '@/types/generated';
+import { ConversionComponents } from '@/types/generated';
 
 export function handleServerError(error: FastifyError, _request: FastifyRequest, reply: FastifyReply) {
   if (error instanceof ZodError) {
     return reply.status(400).send({
       message: 'Validation error',
       issues: error.issues,
-    } satisfies PaymentComponents['schemas']['ValidationError']);
+    } satisfies ConversionComponents['schemas']['ValidationError']);
   }
 
   if (error instanceof AxiosError) {
@@ -32,5 +32,5 @@ export function handleServerError(error: FastifyError, _request: FastifyRequest,
 
   return reply.status(500).send({
     message: 'Internal server error',
-  } satisfies PaymentComponents['schemas']['InternalServerError']);
+  } satisfies ConversionComponents['schemas']['InternalServerError']);
 }
