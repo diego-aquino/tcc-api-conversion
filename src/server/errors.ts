@@ -1,3 +1,4 @@
+import { PrismaClientKnownRequestError, PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
 import { FastifyError, FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
@@ -20,10 +21,24 @@ export function handleServerError(error: FastifyError, _request: FastifyRequest,
     } satisfies ConversionComponents['schemas']['NotFoundError']);
   }
 
-  server.log.error({
-    message: 'Internal server error',
-    error,
-  });
+  if (error instanceof PrismaClientKnownRequestError || error instanceof PrismaClientUnknownRequestError) {
+    server.log.error({
+      message: 'Database error',
+      error: {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        cause: error.cause,
+        clientVersion: error.clientVersion,
+        stack: error.stack,
+      },
+    });
+  } else {
+    server.log.error({
+      message: 'Internal server error',
+      error,
+    });
+  }
 
   return reply.status(500).send({
     message: 'Internal server error',
