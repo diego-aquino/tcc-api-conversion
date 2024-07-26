@@ -24,10 +24,6 @@ const app = fastify({
 
 export type ConversionPath = LiteralHttpServiceSchemaPath<ConversionSchema>;
 
-function inferFileFormatFromName(fileName: string) {
-  return path.extname(fileName).replace(/^\./, '');
-}
-
 type ConversionWithFiles = Prisma.ConversionGetPayload<{
   include: {
     inputFile: true;
@@ -39,10 +35,14 @@ function formatConversionToResponse(conversion: ConversionWithFiles): Conversion
   return {
     id: conversion.id,
     state: conversion.state,
-    inputFileName: conversion.inputFile.name,
-    inputFileFormat: conversion.inputFile.format,
-    outputFileName: conversion.outputFile.name,
-    outputFileFormat: conversion.outputFile.format,
+    inputFile: {
+      name: conversion.inputFile.name,
+      format: conversion.inputFile.format,
+    },
+    outputFile: {
+      name: conversion.outputFile.name,
+      format: conversion.outputFile.format,
+    },
     createdAt: conversion.createdAt.toISOString(),
     completedAt: conversion.completedAt?.toISOString() ?? null,
   };
@@ -56,7 +56,7 @@ function generateConversionCompletionDate() {
 const createConversionSchema = z.object({
   inputFile: z.object({
     name: z.string().min(1),
-    format: z.string().min(1).optional(),
+    format: z.string().min(1),
   }),
   outputFile: z.object({
     format: z.string().min(1),
@@ -78,7 +78,7 @@ app.post('/conversions' satisfies ConversionPath, async (request, reply) => {
         create: {
           id: createId(),
           name: inputFile.name,
-          format: inputFile.format ?? inferFileFormatFromName(inputFile.name),
+          format: inputFile.format,
         },
       },
       outputFile: {

@@ -27,6 +27,7 @@ paths:
                   type: object
                   required:
                     - name
+                    - format
                   properties:
                     name:
                       type: string
@@ -131,22 +132,12 @@ components:
             - COMPLETED
             - ERROR
           example: PENDING
-        inputFileName:
-          type: string
-          description: O nome do arquivo
-          example: file.docx
-        inputFileFormat:
-          type: string
-          description: O formato original do arquivo
-          example: docx
-        outputFileName:
-          type: string
-          description: O nome do arquivo convertido
-          example: file.pdf
-        outputFileFormat:
-          type: string
-          description: O formato do arquivo convertido
-          example: pdf
+        inputFile:
+          description: O arquivo original
+          $ref: '#/components/schemas/File'
+        outputFile:
+          description: O arquivo convertido
+          $ref: '#/components/schemas/File'
         createdAt:
           type: string
           format: date-time
@@ -158,6 +149,21 @@ components:
           nullable: true
           description: A data e hora da finalização da conversão
           example: '2021-08-01T12:00:00Z'
+
+    File:
+      type: object
+      required:
+        - name
+        - format
+      properties:
+        name:
+          type: string
+          description: O nome do arquivo
+          example: file.docx
+        format:
+          type: string
+          description: O formato do arquivo
+          example: docx
 
     ValidationError:
       type: object
