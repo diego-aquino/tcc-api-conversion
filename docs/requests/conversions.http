@@ -2,10 +2,13 @@ POST http://localhost:3001/conversions
 Content-Type: application/json
 
 {
-  "inputFileName": "file.docx",
-  "inputFileType": "docx",
-  "inputFileSize": 1024,
-  "outputFileType": "pdf"
+  "inputFile": {
+    "name": "file.docx",
+    "type": "docx"
+  },
+  "outputFile": {
+    "type": "pdf"
+  }
 }
 
 ###

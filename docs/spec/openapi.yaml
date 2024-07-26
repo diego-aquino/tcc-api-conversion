@@ -24,23 +24,35 @@ paths:
                 - inputFileSize
                 - outputFileType
               properties:
-                inputFileName:
-                  type: string
-                  description: O nome do arquivo
-                  example: file.docx
-                inputFileType:
-                  type: string
-                  description:
-                    O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
-                  example: docx
-                inputFileSize:
-                  type: integer
-                  description: O tamanho do arquivo em bytes
-                  example: 1024
-                outputFileType:
-                  type: string
-                  description: O tipo de arquivo desejado para a conversão
-                  example: pdf
+                inputFile:
+                  type: object
+                  required:
+                    - name
+                    - size
+                  properties:
+                    name:
+                      type: string
+                      description: O nome do arquivo
+                      example: file.docx
+                    type:
+                      type: string
+                      description:
+                        O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do
+                        arquivo
+                      example: docx
+                    size:
+                      type: integer
+                      description: O tamanho do arquivo em bytes
+                      example: 1024
+                outputFile:
+                  type: object
+                  required:
+                    - type
+                  properties:
+                    type:
+                      type: string
+                      description: O tipo de arquivo desejado para a conversão
+                      example: pdf
       responses:
         '202':
           description: Conversão aceita

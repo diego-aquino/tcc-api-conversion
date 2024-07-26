@@ -125,26 +125,30 @@ export interface ConversionOperations {
   'conversions/create': HttpSchema.Method<{
     request: {
       body: {
-        /**
-         * @description O nome do arquivo
-         * @example file.docx
-         */
-        inputFileName: string;
-        /**
-         * @description O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
-         * @example docx
-         */
-        inputFileType?: string;
-        /**
-         * @description O tamanho do arquivo em bytes
-         * @example 1024
-         */
-        inputFileSize: number;
-        /**
-         * @description O tipo de arquivo desejado para a conversão
-         * @example pdf
-         */
-        outputFileType: string;
+        inputFile?: {
+          /**
+           * @description O nome do arquivo
+           * @example file.docx
+           */
+          name: string;
+          /**
+           * @description O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
+           * @example docx
+           */
+          type?: string;
+          /**
+           * @description O tamanho do arquivo em bytes
+           * @example 1024
+           */
+          size: number;
+        };
+        outputFile?: {
+          /**
+           * @description O tipo de arquivo desejado para a conversão
+           * @example pdf
+           */
+          type: string;
+        };
       };
     };
     response: MergeHttpResponsesByStatusCode<

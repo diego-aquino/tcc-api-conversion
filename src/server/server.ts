@@ -56,23 +56,22 @@ function generateConversionCompletionDate() {
 }
 
 const createConversionSchema = z.object({
-  inputFileName: z.string(),
-  inputFileType: z.string().optional(),
-  inputFileSize: z.number(),
-  outputFileType: z.string(),
+  inputFile: z.object({
+    name: z.string(),
+    type: z.string().optional(),
+    size: z.number(),
+  }),
+  outputFile: z.object({
+    type: z.string(),
+  }),
 });
 
 server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
-  const {
-    inputFileName,
-    inputFileType = inferFileType(inputFileName),
-    inputFileSize,
-    outputFileType,
-  } = createConversionSchema.parse(
+  const { inputFile, outputFile } = createConversionSchema.parse(
     request.body,
   ) satisfies ConversionOperations['conversions/create']['request']['body'];
 
-  const outputFileName = `${path.basename(inputFileName, path.extname(inputFileName))}.${outputFileType}`;
+  const outputFileName = `${path.basename(inputFile.name, path.extname(inputFile.name))}.${outputFile.type}`;
 
   const conversion = await database.conversion.create({
     data: {
@@ -81,17 +80,17 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
       inputFile: {
         create: {
           id: createId(),
-          name: inputFileName,
-          type: inputFileType,
-          size: inputFileSize,
+          name: inputFile.name,
+          type: inputFile.type ?? inferFileType(inputFile.name),
+          size: inputFile.size,
         },
       },
       outputFile: {
         create: {
           id: createId(),
           name: outputFileName,
-          type: outputFileType,
-          size: Math.floor(inputFileSize * OUTPUT_FILE_SIZE_RATIO),
+          type: outputFile.type,
+          size: Math.floor(inputFile.size * OUTPUT_FILE_SIZE_RATIO),
         },
       },
       completedAt: null,
