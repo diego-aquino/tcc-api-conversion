@@ -23,7 +23,7 @@ const server = fastify({
 
 export type ConversionPath = LiteralHttpServiceSchemaPath<ConversionSchema>;
 
-function inferFileType(fileName: string) {
+function inferFileFormatFromName(fileName: string) {
   return path.extname(fileName).replace(/^\./, '');
 }
 
@@ -39,9 +39,9 @@ function formatConversionToResponse(conversion: ConversionWithFiles): Conversion
     id: conversion.id,
     state: conversion.state,
     inputFileName: conversion.inputFile.name,
-    inputFileType: conversion.inputFile.type,
+    inputFileFormat: conversion.inputFile.format,
     outputFileName: conversion.outputFile.name,
-    outputFileType: conversion.outputFile.type,
+    outputFileFormat: conversion.outputFile.format,
     createdAt: conversion.createdAt.toISOString(),
     completedAt: conversion.completedAt?.toISOString() ?? null,
   };
@@ -55,10 +55,10 @@ function generateConversionCompletionDate() {
 const createConversionSchema = z.object({
   inputFile: z.object({
     name: z.string(),
-    type: z.string().optional(),
+    format: z.string().optional(),
   }),
   outputFile: z.object({
-    type: z.string(),
+    format: z.string(),
   }),
 });
 
@@ -67,7 +67,7 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
     request.body,
   ) satisfies ConversionOperations['conversions/create']['request']['body'];
 
-  const outputFileName = `${path.basename(inputFile.name, path.extname(inputFile.name))}.${outputFile.type}`;
+  const outputFileName = `${path.basename(inputFile.name, path.extname(inputFile.name))}.${outputFile.format}`;
 
   const conversion = await database.conversion.create({
     data: {
@@ -77,14 +77,14 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
         create: {
           id: createId(),
           name: inputFile.name,
-          type: inputFile.type ?? inferFileType(inputFile.name),
+          format: inputFile.format ?? inferFileFormatFromName(inputFile.name),
         },
       },
       outputFile: {
         create: {
           id: createId(),
           name: outputFileName,
-          type: outputFile.type,
+          format: outputFile.format,
         },
       },
       completedAt: null,

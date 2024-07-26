@@ -32,9 +32,9 @@ enum ConversionState {
 }
 
 model File {
-  id   String @id
-  name String
-  type String
+  id     String @id
+  name   String
+  format String
 
   conversionsAsInput  Conversion[] @relation("inputFile")
   conversionsAsOutput Conversion[] @relation("outputFile")

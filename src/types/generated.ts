@@ -38,20 +38,20 @@ export interface ConversionComponents {
        */
       inputFileName: string;
       /**
-       * @description O tipo original do arquivo
+       * @description O formato original do arquivo
        * @example docx
        */
-      inputFileType: string;
+      inputFileFormat: string;
       /**
        * @description O nome do arquivo convertido
        * @example file.pdf
        */
       outputFileName: string;
       /**
-       * @description O tipo de arquivo desejado
+       * @description O formato do arquivo convertido
        * @example pdf
        */
-      outputFileType: string;
+      outputFileFormat: string;
       /**
        * Format: date-time
        * @description A data e hora de criação da conversão
@@ -122,17 +122,17 @@ export interface ConversionOperations {
            */
           name: string;
           /**
-           * @description O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
+           * @description O formato original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
            * @example docx
            */
-          type?: string;
+          format?: string;
         };
         outputFile: {
           /**
-           * @description O tipo de arquivo desejado para a conversão
+           * @description O formato desejado do arquivo
            * @example pdf
            */
-          type: string;
+          format: string;
         };
       };
     };

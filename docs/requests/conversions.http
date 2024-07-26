@@ -4,10 +4,10 @@ Content-Type: application/json
 {
   "inputFile": {
     "name": "file.docx",
-    "type": "docx"
+    "format": "docx"
   },
   "outputFile": {
-    "type": "pdf"
+    "format": "pdf"
   }
 }
 

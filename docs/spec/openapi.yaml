@@ -32,20 +32,20 @@ paths:
                       type: string
                       description: O nome do arquivo
                       example: file.docx
-                    type:
+                    format:
                       type: string
                       description:
-                        O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do
+                        O formato original do arquivo; se não fornecido, será inferido a partir da extensão do nome do
                         arquivo
                       example: docx
                 outputFile:
                   type: object
                   required:
-                    - type
+                    - format
                   properties:
-                    type:
+                    format:
                       type: string
-                      description: O tipo de arquivo desejado para a conversão
+                      description: O formato desejado do arquivo
                       example: pdf
       responses:
         '202':
@@ -109,9 +109,9 @@ components:
         - id
         - state
         - inputFileName
-        - inputFileType
+        - inputFileFormat
         - outputFileName
-        - outputFileType
+        - outputFileFormat
         - createdAt
         - completedAt
       properties:
@@ -135,17 +135,17 @@ components:
           type: string
           description: O nome do arquivo
           example: file.docx
-        inputFileType:
+        inputFileFormat:
           type: string
-          description: O tipo original do arquivo
+          description: O formato original do arquivo
           example: docx
         outputFileName:
           type: string
           description: O nome do arquivo convertido
           example: file.pdf
-        outputFileType:
+        outputFileFormat:
           type: string
-          description: O tipo de arquivo desejado
+          description: O formato do arquivo convertido
           example: pdf
         createdAt:
           type: string
