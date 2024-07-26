@@ -10,7 +10,7 @@ export type ConversionSchema = HttpSchema.Paths<{
   };
   '/conversions/:conversionId': {
     /** Obter os detalhes de uma conversão */
-    GET: ConversionOperations['conversions/get'];
+    GET: ConversionOperations['conversions/getById'];
   };
 }>;
 
@@ -18,51 +18,50 @@ export interface ConversionComponents {
   schemas: {
     Conversion: {
       /**
-       * Format: uuid
        * @description O identificador da conversão
-       * @example 1688deb1-9807-4da0-82be-90dc39d8bbab
+       * @example pfh0haxfpzowht3oi213cqos
        */
       id: string;
       /**
        * @description O estado da conversão:
        *     - PENDING: conversão pendente;
-       *     - COMPLETE: conversão concluída;
+       *     - COMPLETED: conversão concluída;
        *     - ERROR: conversão com erro.
        *
        * @example PENDING
        * @enum {string}
        */
-      state: 'PENDING' | 'COMPLETE' | 'ERROR';
+      state: 'PENDING' | 'COMPLETED' | 'ERROR';
       /**
        * @description O nome do arquivo
        * @example file.docx
        */
-      originalFileName: string;
-      /**
-       * @description O tamanho do arquivo em bytes
-       * @example 1024
-       */
-      originalFileSize: number;
+      inputFileName: string;
       /**
        * @description O tipo original do arquivo
        * @example docx
        */
-      originalFileType: string;
+      inputFileType: string;
       /**
-       * @description O tipo de arquivo desejado
-       * @example pdf
+       * @description O tamanho do arquivo em bytes
+       * @example 1024
        */
-      targetFileType: string;
+      inputFileSize: number;
       /**
        * @description O nome do arquivo convertido
        * @example file.pdf
        */
-      targetFileName: string;
+      outputFileName: string;
+      /**
+       * @description O tipo de arquivo desejado
+       * @example pdf
+       */
+      outputFileType: string;
       /**
        * @description O tamanho do arquivo convertido em bytes
        * @example 2048
        */
-      targetFileSize: number;
+      outputFileSize: number;
       /**
        * Format: date-time
        * @description A data e hora de criação da conversão
@@ -74,7 +73,7 @@ export interface ConversionComponents {
        * @description A data e hora da finalização da conversão
        * @example 2021-08-01T12:00:00Z
        */
-      finishedAt?: string;
+      completedAt: string | null;
     };
     ValidationError: {
       /**
@@ -130,22 +129,22 @@ export interface ConversionOperations {
          * @description O nome do arquivo
          * @example file.docx
          */
-        originalFileName: string;
-        /**
-         * @description O tamanho do arquivo em bytes
-         * @example 1024
-         */
-        originalFileSize: number;
+        inputFileName: string;
         /**
          * @description O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
          * @example docx
          */
-        originalFileType?: string;
+        inputFileType?: string;
+        /**
+         * @description O tamanho do arquivo em bytes
+         * @example 1024
+         */
+        inputFileSize: number;
         /**
          * @description O tipo de arquivo desejado para a conversão
          * @example pdf
          */
-        targetFileType: string;
+        outputFileType: string;
       };
     };
     response: MergeHttpResponsesByStatusCode<
@@ -169,7 +168,7 @@ export interface ConversionOperations {
       ]
     >;
   }>;
-  'conversions/get': HttpSchema.Method<{
+  'conversions/getById': HttpSchema.Method<{
     response: MergeHttpResponsesByStatusCode<
       [
         {

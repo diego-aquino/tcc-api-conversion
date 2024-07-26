@@ -20,24 +20,24 @@ paths:
             schema:
               type: object
               required:
-                - originalFileName
-                - originalFileSize
-                - targetFileType
+                - inputFileName
+                - inputFileSize
+                - outputFileType
               properties:
-                originalFileName:
+                inputFileName:
                   type: string
                   description: O nome do arquivo
                   example: file.docx
-                originalFileSize:
-                  type: integer
-                  description: O tamanho do arquivo em bytes
-                  example: 1024
-                originalFileType:
+                inputFileType:
                   type: string
                   description:
                     O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do arquivo
                   example: docx
-                targetFileType:
+                inputFileSize:
+                  type: integer
+                  description: O tamanho do arquivo em bytes
+                  example: 1024
+                outputFileType:
                   type: string
                   description: O tipo de arquivo desejado para a conversão
                   example: pdf
@@ -64,7 +64,7 @@ paths:
   /conversions/{conversionId}:
     get:
       summary: Obter os detalhes de uma conversão
-      operationId: conversions/get
+      operationId: conversions/getById
       tags:
         - Conversões
       parameters:
@@ -74,8 +74,7 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
-          example: 1688deb1-9807-4da0-82be-90dc39d8bbab
+          example: tz4a98xxat96iws9zmbrgj3a
       responses:
         '200':
           description: Conversão encontrada
@@ -103,53 +102,52 @@ components:
       required:
         - id
         - state
-        - originalFileName
-        - originalFileSize
-        - originalFileType
-        - targetFileType
-        - targetFileName
-        - targetFileSize
+        - inputFileName
+        - inputFileType
+        - inputFileSize
+        - outputFileName
+        - outputFileType
+        - outputFileSize
         - createdAt
-        - updatedAt
+        - completedAt
       properties:
         id:
           type: string
-          format: uuid
           description: O identificador da conversão
-          example: 1688deb1-9807-4da0-82be-90dc39d8bbab
+          example: pfh0haxfpzowht3oi213cqos
         state:
           type: string
           description: |
             O estado da conversão:
             - PENDING: conversão pendente;
-            - COMPLETE: conversão concluída;
+            - COMPLETED: conversão concluída;
             - ERROR: conversão com erro.
           enum:
             - PENDING
-            - COMPLETE
+            - COMPLETED
             - ERROR
           example: PENDING
-        originalFileName:
+        inputFileName:
           type: string
           description: O nome do arquivo
           example: file.docx
-        originalFileSize:
-          type: integer
-          description: O tamanho do arquivo em bytes
-          example: 1024
-        originalFileType:
+        inputFileType:
           type: string
           description: O tipo original do arquivo
           example: docx
-        targetFileType:
-          type: string
-          description: O tipo de arquivo desejado
-          example: pdf
-        targetFileName:
+        inputFileSize:
+          type: integer
+          description: O tamanho do arquivo em bytes
+          example: 1024
+        outputFileName:
           type: string
           description: O nome do arquivo convertido
           example: file.pdf
-        targetFileSize:
+        outputFileType:
+          type: string
+          description: O tipo de arquivo desejado
+          example: pdf
+        outputFileSize:
           type: integer
           description: O tamanho do arquivo convertido em bytes
           example: 2048
@@ -158,9 +156,10 @@ components:
           format: date-time
           description: A data e hora de criação da conversão
           example: '2021-08-01T12:00:00Z'
-        finishedAt:
+        completedAt:
           type: string
           format: date-time
+          nullable: true
           description: A data e hora da finalização da conversão
           example: '2021-08-01T12:00:00Z'
 

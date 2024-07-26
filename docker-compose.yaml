@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  conversion-database:
+    image: postgres:15.7-alpine3.20
+    container_name: tcc-api-conversion-database
+    restart: on-failure
+    environment:
+      POSTGRES_USER: conversion
+      POSTGRES_PASSWORD: conversion
+      POSTGRES_DB: conversion
+    volumes:
+      - tcc-api-conversion-database:/var/lib/postgresql/data
+    networks:
+      - conversion
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready --username $$POSTGRES_USER --dbname $$POSTGRES_DB
+      interval: 15s
+      timeout: 5s
+      retries: 12
+
+networks:
+  conversion:
+    driver: bridge
+
+volumes:
+  tcc-api-conversion-database:
+    driver: local

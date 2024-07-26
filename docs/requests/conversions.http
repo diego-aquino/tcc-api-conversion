@@ -1,0 +1,13 @@
+POST http://localhost:3001/conversions
+Content-Type: application/json
+
+{
+  "inputFileName": "file.docx",
+  "inputFileType": "docx",
+  "inputFileSize": 1024,
+  "outputFileType": "pdf"
+}
+
+###
+
+GET http://localhost:3001/conversions/ijqmm8mjxuh6n1rqqxpgyzbr

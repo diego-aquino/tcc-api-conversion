@@ -1,6 +1,0 @@
-POST http://localhost:3000/conversions
-Content-Type: application/json
-
-{
-  "price": 100
-}
