@@ -12,7 +12,6 @@ import { generateRandomInteger } from '@/utils/data';
 import { environment } from '../config/environment';
 import { handleServerError, NotFoundError } from './errors';
 
-const OUTPUT_FILE_SIZE_RATIO = 0.9;
 const MIN_CONVERSION_DURATION = 100;
 const MAX_CONVERSION_DURATION = 750;
 
@@ -41,10 +40,8 @@ function formatConversionToResponse(conversion: ConversionWithFiles): Conversion
     state: conversion.state,
     inputFileName: conversion.inputFile.name,
     inputFileType: conversion.inputFile.type,
-    inputFileSize: conversion.inputFile.size,
     outputFileName: conversion.outputFile.name,
     outputFileType: conversion.outputFile.type,
-    outputFileSize: conversion.outputFile.size,
     createdAt: conversion.createdAt.toISOString(),
     completedAt: conversion.completedAt?.toISOString() ?? null,
   };
@@ -59,7 +56,6 @@ const createConversionSchema = z.object({
   inputFile: z.object({
     name: z.string(),
     type: z.string().optional(),
-    size: z.number(),
   }),
   outputFile: z.object({
     type: z.string(),
@@ -82,7 +78,6 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
           id: createId(),
           name: inputFile.name,
           type: inputFile.type ?? inferFileType(inputFile.name),
-          size: inputFile.size,
         },
       },
       outputFile: {
@@ -90,7 +85,6 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
           id: createId(),
           name: outputFileName,
           type: outputFile.type,
-          size: Math.floor(inputFile.size * OUTPUT_FILE_SIZE_RATIO),
         },
       },
       completedAt: null,

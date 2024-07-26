@@ -43,11 +43,6 @@ export interface ConversionComponents {
        */
       inputFileType: string;
       /**
-       * @description O tamanho do arquivo em bytes
-       * @example 1024
-       */
-      inputFileSize: number;
-      /**
        * @description O nome do arquivo convertido
        * @example file.pdf
        */
@@ -57,11 +52,6 @@ export interface ConversionComponents {
        * @example pdf
        */
       outputFileType: string;
-      /**
-       * @description O tamanho do arquivo convertido em bytes
-       * @example 2048
-       */
-      outputFileSize: number;
       /**
        * Format: date-time
        * @description A data e hora de criação da conversão
@@ -125,7 +115,7 @@ export interface ConversionOperations {
   'conversions/create': HttpSchema.Method<{
     request: {
       body: {
-        inputFile?: {
+        inputFile: {
           /**
            * @description O nome do arquivo
            * @example file.docx
@@ -136,13 +126,8 @@ export interface ConversionOperations {
            * @example docx
            */
           type?: string;
-          /**
-           * @description O tamanho do arquivo em bytes
-           * @example 1024
-           */
-          size: number;
         };
-        outputFile?: {
+        outputFile: {
           /**
            * @description O tipo de arquivo desejado para a conversão
            * @example pdf

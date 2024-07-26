@@ -35,7 +35,6 @@ model File {
   id   String @id
   name String
   type String
-  size Int
 
   conversionsAsInput  Conversion[] @relation("inputFile")
   conversionsAsOutput Conversion[] @relation("outputFile")

@@ -20,15 +20,13 @@ paths:
             schema:
               type: object
               required:
-                - inputFileName
-                - inputFileSize
-                - outputFileType
+                - inputFile
+                - outputFile
               properties:
                 inputFile:
                   type: object
                   required:
                     - name
-                    - size
                   properties:
                     name:
                       type: string
@@ -40,10 +38,6 @@ paths:
                         O tipo original do arquivo; se não fornecido, será inferido a partir da extensão do nome do
                         arquivo
                       example: docx
-                    size:
-                      type: integer
-                      description: O tamanho do arquivo em bytes
-                      example: 1024
                 outputFile:
                   type: object
                   required:
@@ -116,10 +110,8 @@ components:
         - state
         - inputFileName
         - inputFileType
-        - inputFileSize
         - outputFileName
         - outputFileType
-        - outputFileSize
         - createdAt
         - completedAt
       properties:
@@ -147,10 +139,6 @@ components:
           type: string
           description: O tipo original do arquivo
           example: docx
-        inputFileSize:
-          type: integer
-          description: O tamanho do arquivo em bytes
-          example: 1024
         outputFileName:
           type: string
           description: O nome do arquivo convertido
@@ -159,10 +147,6 @@ components:
           type: string
           description: O tipo de arquivo desejado
           example: pdf
-        outputFileSize:
-          type: integer
-          description: O tamanho do arquivo convertido em bytes
-          example: 2048
         createdAt:
           type: string
           format: date-time
