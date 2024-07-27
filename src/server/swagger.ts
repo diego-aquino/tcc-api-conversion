@@ -8,7 +8,7 @@ import app from './app';
 
 const OPENAPI_SPEC_DIRECTORY = path.join(ROOT_DIRECTORY, 'docs', 'spec');
 
-export async function loadServerSwagger() {
+export async function loadSwagger() {
   await app.register(fastifySwagger, {
     mode: 'static',
     specification: {

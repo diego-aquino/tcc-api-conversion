@@ -1,7 +1,7 @@
 import app from '@/server/app';
-import { loadServerSwagger } from '@/server/swagger';
+import { loadSwagger } from '@/server/swagger';
 
-const pluginsLoadPromise = loadServerSwagger();
+const pluginsLoadPromise = loadSwagger();
 
 async function serverlessHandler(request: Request, response: Response) {
   await pluginsLoadPromise;
