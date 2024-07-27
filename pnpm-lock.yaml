@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@fastify/static':
-        specifier: ^7.0.4
-        version: 7.0.4
       '@fastify/swagger':
         specifier: ^8.15.0
         version: 8.15.0
@@ -84,9 +81,6 @@ importers:
       tsup:
         specifier: ^8.2.2
         version: 8.2.2(tsx@4.16.2)(typescript@5.5.4)(yaml@2.4.5)
-      tsx:
-        specifier: ^4.16.2
-        version: 4.16.2
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -3682,6 +3676,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.21.5
       '@esbuild/win32-ia32': 0.21.5
       '@esbuild/win32-x64': 0.21.5
+    optional: true
 
   esbuild@0.23.0:
     optionalDependencies:
@@ -5071,6 +5066,7 @@ snapshots:
       get-tsconfig: 4.7.6
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   type-check@0.4.0:
     dependencies:

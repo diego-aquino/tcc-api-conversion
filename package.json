@@ -7,10 +7,11 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "dotenv -c development -- tsx watch src/index.ts",
-    "build": "dotenv -c production -- tsup",
+    "dev": "dotenv -c development -- tsup --onSuccess 'pnpm build:swagger && node dist/index.js' --watch",
+    "build": "dotenv -c production -- tsup --onSuccess 'pnpm build:swagger'",
+    "build:swagger": "mkdir -p ./public && cp -r ./node_modules/@fastify/swagger-ui/static ./public",
     "start": "dotenv -c production -- node dist/index.js",
-    "lint": "eslint --ext 'ts,tsx' --cache --no-error-on-unmatched-pattern --max-warnings 0 --fix",
+    "lint": "eslint --ext 'ts' --cache --no-error-on-unmatched-pattern --max-warnings 0 --fix",
     "style": "prettier --log-level warn --ignore-unknown --no-error-on-unmatched-pattern --cache",
     "style:check": "pnpm style --check",
     "style:format": "pnpm style --write",
@@ -23,10 +24,10 @@
     "pre:commit": "lint-staged",
     "pre:push": "concurrently --names style,types,lint 'pnpm style:check .' 'pnpm types:check' 'pnpm lint .'",
     "deps:up": "docker compose up conversion-database -d --wait",
-    "prepare": "husky || echo 'Could not install git hooks with husky.'"
+    "prepare": "husky || echo 'Could not install git hooks with husky.'",
+    "postinstall": "pnpm db:dev generate"
   },
   "dependencies": {
-    "@fastify/static": "^7.0.4",
     "@fastify/swagger": "^8.15.0",
     "@fastify/swagger-ui": "^4.0.1",
     "@paralleldrive/cuid2": "^2.2.2",
@@ -53,7 +54,6 @@
     "prettier-plugin-sql": "^0.18.1",
     "prisma": "^5.17.0",
     "tsup": "^8.2.2",
-    "tsx": "^4.16.2",
     "typescript": "^5.5.4",
     "zimic": "^0.8.2"
   }
