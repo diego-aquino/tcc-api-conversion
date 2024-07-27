@@ -4,12 +4,12 @@ import path from 'path';
 
 import { PUBLIC_DIRECTORY, ROOT_DIRECTORY } from '@/config/constants';
 
-import server from './server';
+import app from './app';
 
 const OPENAPI_SPEC_DIRECTORY = path.join(ROOT_DIRECTORY, 'docs', 'spec');
 
 export async function loadServerSwagger() {
-  await server.register(fastifySwagger, {
+  await app.register(fastifySwagger, {
     mode: 'static',
     specification: {
       path: path.join(OPENAPI_SPEC_DIRECTORY, 'openapi.yaml'),
@@ -17,7 +17,7 @@ export async function loadServerSwagger() {
     },
   });
 
-  await server.register(fastifySwaggerUI, {
+  await app.register(fastifySwaggerUI, {
     routePrefix: '/',
     baseDir: path.join(PUBLIC_DIRECTORY, 'static'),
     uiConfig: {

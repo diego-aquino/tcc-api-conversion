@@ -16,7 +16,7 @@ import { handleServerError, NotFoundError } from './errors';
 const MIN_CONVERSION_DURATION = 100;
 const MAX_CONVERSION_DURATION = 750;
 
-const server = fastify({
+const app = fastify({
   logger: true,
   disableRequestLogging: environment.NODE_ENV !== 'development',
   pluginTimeout: 0,
@@ -63,7 +63,7 @@ const createConversionSchema = z.object({
   }),
 });
 
-server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
+app.post('/conversions' satisfies ConversionPath, async (request, reply) => {
   const { inputFile, outputFile } = createConversionSchema.parse(
     request.body,
   ) satisfies ConversionOperations['conversions/create']['request']['body'];
@@ -110,7 +110,7 @@ const getConversionSchema = z.object({
 
 type GetConversionByIdParams = PathParamsSchemaFromPath<Extract<ConversionPath, '/conversions/:conversionId'>>;
 
-server.get('/conversions/:conversionId' satisfies ConversionPath, async (request, reply) => {
+app.get('/conversions/:conversionId' satisfies ConversionPath, async (request, reply) => {
   const { conversionId } = getConversionSchema.parse(request.params) satisfies GetConversionByIdParams;
 
   const conversion = await database.conversion.findUnique({
@@ -152,6 +152,6 @@ server.get('/conversions/:conversionId' satisfies ConversionPath, async (request
     .send(conversionResponse satisfies ConversionOperations['conversions/getById']['response']['200']['body']);
 });
 
-server.setErrorHandler(handleServerError);
+app.setErrorHandler(handleServerError);
 
-export default server;
+export default app;

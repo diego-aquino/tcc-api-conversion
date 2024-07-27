@@ -1,13 +1,13 @@
-import server from '@/server/server';
+import app from '@/server/app';
 import { loadServerSwagger } from '@/server/swagger';
 
 const pluginsLoadPromise = loadServerSwagger();
 
 async function serverlessHandler(request: Request, response: Response) {
   await pluginsLoadPromise;
-  await server.ready();
+  await app.ready();
 
-  server.server.emit('request', request, response);
+  app.server.emit('request', request, response);
 }
 
 export default serverlessHandler;

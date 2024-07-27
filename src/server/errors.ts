@@ -2,7 +2,7 @@ import { PrismaClientKnownRequestError, PrismaClientUnknownRequestError } from '
 import { FastifyError, FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
-import server from '@/server/server';
+import app from '@/server/app';
 import { ConversionComponents } from '@/types/generated';
 
 export class NotFoundError extends Error {}
@@ -22,7 +22,7 @@ export function handleServerError(error: FastifyError, _request: FastifyRequest,
   }
 
   if (error instanceof PrismaClientKnownRequestError || error instanceof PrismaClientUnknownRequestError) {
-    server.log.error({
+    app.log.error({
       message: 'Database error',
       error: {
         name: error.name,
@@ -34,7 +34,7 @@ export function handleServerError(error: FastifyError, _request: FastifyRequest,
       },
     });
   } else {
-    server.log.error({
+    app.log.error({
       message: 'Internal server error',
       error,
     });
