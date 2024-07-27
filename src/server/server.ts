@@ -7,9 +7,10 @@ import { z } from 'zod';
 
 import { database } from '@/database/client';
 import { ConversionComponents, ConversionOperations, ConversionSchema } from '@/types/generated';
-import { generateRandomInteger } from '@/utils/data';
+import { generateRandomInteger, pickDefinedProperties } from '@/utils/data';
 
 import { environment } from '../config/environment';
+import { DEFAULT_PUBLIC_CACHE_CONTROL_HEADER } from './cache';
 import { handleServerError, NotFoundError } from './errors';
 
 const MIN_CONVERSION_DURATION = 100;
@@ -54,11 +55,11 @@ function generateConversionCompletionDate() {
 
 const createConversionSchema = z.object({
   inputFile: z.object({
-    name: z.string(),
-    format: z.string().optional(),
+    name: z.string().min(1),
+    format: z.string().min(1).optional(),
   }),
   outputFile: z.object({
-    format: z.string(),
+    format: z.string().min(1),
   }),
 });
 
@@ -104,7 +105,7 @@ server.post('/conversions' satisfies ConversionPath, async (request, reply) => {
 });
 
 const getConversionSchema = z.object({
-  conversionId: z.string(),
+  conversionId: z.string().min(1),
 });
 
 type GetConversionByIdParams = PathParamsSchemaFromPath<Extract<ConversionPath, '/conversions/:conversionId'>>;
@@ -142,6 +143,11 @@ server.get('/conversions/:conversionId' satisfies ConversionPath, async (request
   const conversionResponse = formatConversionToResponse(conversion);
 
   await reply
+    .headers(
+      pickDefinedProperties({
+        'cache-control': conversion.state === 'COMPLETED' ? DEFAULT_PUBLIC_CACHE_CONTROL_HEADER : undefined,
+      }),
+    )
     .status(200)
     .send(conversionResponse satisfies ConversionOperations['conversions/getById']['response']['200']['body']);
 });
