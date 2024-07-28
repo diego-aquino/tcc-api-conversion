@@ -1,3 +1,4 @@
+import fastifyCORS from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import path from 'path';
@@ -9,6 +10,10 @@ import app from './app';
 const OPENAPI_SPEC_DIRECTORY = path.join(ROOT_DIRECTORY, 'docs', 'spec');
 
 export async function loadSwagger() {
+  await app.register(fastifyCORS, {
+    origin: '*',
+  });
+
   await app.register(fastifySwagger, {
     mode: 'static',
     specification: {
