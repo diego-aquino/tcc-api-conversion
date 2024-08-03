@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { database } from '@/database/client';
 import { ConversionComponents, ConversionOperations, ConversionSchema } from '@/types/generated';
-import { generateRandomInteger, pickDefinedProperties } from '@/utils/data';
+import { generateRandomInteger } from '@/utils/data';
 
 import { environment } from '../config/environment';
 import { DEFAULT_PUBLIC_CACHE_CONTROL_HEADER } from './cache';
@@ -142,12 +142,12 @@ app.get('/conversions/:conversionId' satisfies ConversionPath, async (request, r
 
   const conversionResponse = formatConversionToResponse(conversion);
 
+  const cacheControlHeader = conversion.state === 'COMPLETED' ? DEFAULT_PUBLIC_CACHE_CONTROL_HEADER : undefined;
+  if (cacheControlHeader) {
+    void reply.header('cache-control', cacheControlHeader);
+  }
+
   await reply
-    .headers(
-      pickDefinedProperties({
-        'cache-control': conversion.state === 'COMPLETED' ? DEFAULT_PUBLIC_CACHE_CONTROL_HEADER : undefined,
-      }),
-    )
     .status(200)
     .send(conversionResponse satisfies ConversionOperations['conversions/getById']['response']['200']['body']);
 });
