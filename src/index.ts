@@ -1,10 +1,10 @@
 import { environment } from './config/environment';
 import app from './server/app';
-import { loadSwagger } from './server/swagger';
+import { loadPlugins } from './server/plugins';
 
 async function startServer() {
   try {
-    await loadSwagger();
+    await loadPlugins();
 
     await app.listen({
       host: '0.0.0.0',
