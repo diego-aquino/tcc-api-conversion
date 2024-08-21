@@ -17,7 +17,7 @@ const MIN_CONVERSION_DURATION = 100;
 const MAX_CONVERSION_DURATION = 750;
 
 const app = fastify({
-  logger: true,
+  logger: environment.NODE_ENV !== 'test',
   disableRequestLogging: environment.NODE_ENV !== 'development',
   pluginTimeout: 0,
 });
