@@ -3,7 +3,7 @@
 
 import type { HttpSchema, HttpStatusCode, MergeHttpResponsesByStatusCode } from 'zimic/http';
 
-export type ConversionSchema = HttpSchema.Paths<{
+export type ConversionSchema = HttpSchema<{
   '/conversions': {
     /** Criar uma conversão */
     POST: ConversionOperations['conversions/create'];
@@ -72,7 +72,7 @@ export interface ConversionComponents {
        */
       message: string;
       /** @description Os problemas de validação */
-      issues?: {
+      issues?: ({
         /**
          * @description A mensagem de erro
          * @example Invalid input: expected string, received number
@@ -91,8 +91,9 @@ export interface ConversionComponents {
          *     ]
          */
         path?: (string | number)[];
+      } & {
         [key: string]: any;
-      }[];
+      })[];
     };
     NotFoundError: {
       /**
